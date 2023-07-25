@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import random
+from pydle import on_message
 
-class quotes:
+class quotes(pydle):
     def __init__(self):
         pass
 
@@ -15,11 +16,10 @@ class quotes:
             soppa = random.choice(soppa)
         return soppa
 
-    async def handle_command(self, target, by, message):
-        if message.startswith("!bofh"):
+    # on_message pydle listener for bofh 
+    def on_message(self, source, target, message):
+        if message.startswith('.bofh'):
             return self.bofh()
-        else:
-            return None
 
 
 
