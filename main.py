@@ -49,7 +49,7 @@ class FlyBot(pydle.Client):
 
                 # Add the module to the self.modules dictionary
                 self.modules[module_name] = module
-                print(self.modules)
+                print()
     
     # irc command to reload a particular module loaded from the code/ directory
     # this uses importlib to reload the module. command looks like !reload <module>
