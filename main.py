@@ -7,6 +7,7 @@ import configparser
 import os
 import importlib
 import sys
+from code import Base
 
 # Use configparser to read the config file from the same directory as the script
 
@@ -35,21 +36,11 @@ class FlyBot(pydle.Client):
     # of code without having to restart the bot. this uses importlib to import the code
     # the path of the files ar code/ + filename.py
 
-    def loadcode(self):
-        # Get the path to the code folder
-        code_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "code")
 
-        # Iterate over the files in the code folder
-        for file in os.listdir(code_path):
-            # Check if the file has a .py extension
-            if file.endswith(".py"):
-                # Import the module using importlib
-                module_name = "code." + file[:-3]
-                module = importlib.import_module(module_name)
-
-                # Add the module to the self.modules dictionary
-                self.modules[module_name] = module
-                print()
+    if __name__ == '__main__':
+        for p in Base.plugins:
+            inst = p()
+            inst.start()
     
     # irc command to reload a particular module loaded from the code/ directory
     # this uses importlib to reload the module. command looks like !reload <module>
@@ -86,6 +77,9 @@ class FlyBot(pydle.Client):
                     yield from self.message(target, "Error unloading module: " + str(e))
             else:
                 yield from self.message(target, "You are not authorized to use this command.")
+        elif message.startswith("!bofh"):
+            yield from self.message(target, "BOFH says: " + get_random_bofh_quote())
+            print("BOFH says: " + quotes.get_random_bofh_quote())
 
 
 
@@ -94,6 +88,5 @@ class FlyBot(pydle.Client):
 
 
 client = FlyBot(src_nick, fallback_nicknames=[], username=src_ident, realname=src_realname)
-client.loadcode()
 client.run(ext_server_hostname, tls=False, tls_verify=False, source_address=(src_host, 0))
 client.handle_forever(family=pydle.IPv6)
