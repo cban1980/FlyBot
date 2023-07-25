@@ -1,0 +1,2 @@
+# FlyBot
+FlyBot IRC bot.
