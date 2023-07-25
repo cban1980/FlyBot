@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as bs
 import random
 import pydle
 
+
 def bofh():
     """Return random bofh quote"""
     url_data = requests.get('http://pages.cs.wisc.edu/~ballard/bofh/excuses').text
@@ -15,10 +16,11 @@ def bofh():
 # on_message pydle coroutine for triggering the bofh function and returning the quote
 # when someone writes !bofh in the channel the bot is in.
 
-@pydle.coroutine
-def on_message(self, target, by, message):
-    if message.startswith("!bofh"):
-        yield from message(target, bofh())
-    else:
-        print("Not bofh")
+class quotes(pydle.Client):
+    # Define the on_message coroutine function and decorate it with @pydle.coroutine
+    @pydle.coroutine
+    def on_message(self, target, by, message):
+        if message.startswith("!bofh"):
+            yield from self.message(target, "BOFH says: " + bofh())
+            print("BOFH says: " + bofh())
 

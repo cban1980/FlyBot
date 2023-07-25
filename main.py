@@ -25,6 +25,7 @@ class FlyBot(pydle.Client):
     """main class for the bot"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.modules = {}
     
     async def on_connect(self):
         await self.join(ext_channel_autojoin_list)
@@ -35,10 +36,20 @@ class FlyBot(pydle.Client):
     # the path of the files ar code/ + filename.py
 
     def loadcode(self):
-        for file in os.listdir(os.path.dirname(os.path.realpath(__file__)) + "/code/"):
+        # Get the path to the code folder
+        code_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "code")
+
+        # Iterate over the files in the code folder
+        for file in os.listdir(code_path):
+            # Check if the file has a .py extension
             if file.endswith(".py"):
-                importlib.import_module("code." + file[:-3])
-                print("Loaded " + file[:-3])
+                # Import the module using importlib
+                module_name = "code." + file[:-3]
+                module = importlib.import_module(module_name)
+
+                # Add the module to the self.modules dictionary
+                self.modules[module_name] = module
+                print(self.modules)
     
     # irc command to reload a particular module loaded from the code/ directory
     # this uses importlib to reload the module. command looks like !reload <module>
@@ -75,6 +86,7 @@ class FlyBot(pydle.Client):
                     yield from self.message(target, "Error unloading module: " + str(e))
             else:
                 yield from self.message(target, "You are not authorized to use this command.")
+
 
 
     # pydle coroutine to hotload a .py file from the code/ directory by using importlib
