@@ -1,25 +1,24 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import random
-from pydle import on_message
+import pydle
 
-class quotes(pydle):
-    def __init__(self):
-        pass
+def bofh():
+    """Return random bofh quote"""
+    url_data = requests.get('http://pages.cs.wisc.edu/~ballard/bofh/excuses').text
+    soup = bs(url_data, 'html.parser')
+    for line in soup:
+        soppa = line.splitlines()
+        soppa = random.choice(soppa)
+    return soppa
 
-    def bofh(self):
-        """Return random bofh quote"""
-        url_data = requests.get('http://pages.cs.wisc.edu/~ballard/bofh/excuses').text
-        soup = bs(url_data, 'html.parser')
-        for line in soup:
-            soppa = line.splitlines()
-            soppa = random.choice(soppa)
-        return soppa
+# on_message pydle coroutine for triggering the bofh function and returning the quote
+# when someone writes !bofh in the channel the bot is in.
 
-    # on_message pydle listener for bofh 
-    def on_message(self, source, target, message):
-        if message.startswith('.bofh'):
-            return self.bofh()
-
-
+@pydle.coroutine
+def on_message(self, target, by, message):
+    if message.startswith("!bofh"):
+        yield from message(target, bofh())
+    else:
+        print("Not bofh")
 

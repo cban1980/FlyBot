@@ -75,7 +75,7 @@ class FlyBot(pydle.Client):
                     yield from self.message(target, "Error unloading module: " + str(e))
             else:
                 yield from self.message(target, "You are not authorized to use this command.")
-            
+
 
     # pydle coroutine to hotload a .py file from the code/ directory by using importlib
     # is triggered by the !hotload command. command looks like !hotload <module>
