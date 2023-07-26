@@ -77,10 +77,6 @@ class FlyBot(pydle.Client):
                     yield from self.message(target, "Error unloading module: " + str(e))
             else:
                 yield from self.message(target, "You are not authorized to use this command.")
-        elif message.startswith("!bofh"):
-            yield from self.message(target, "BOFH says: " + get_random_bofh_quote())
-            print("BOFH says: " + quotes.get_random_bofh_quote())
-
 
 
     # pydle coroutine to hotload a .py file from the code/ directory by using importlib
