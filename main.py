@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# IRC Bot for #nightfly on DALnet, based on the pydle framework for Python 3.10 and above.
+# IRC Bot for #nightfly on DALnet, based on the pydle framework for Python 3.7 and above.
 
 import pydle
 import configparser
 import os
-import importlib
-import sys
-from code import Base
-
+import platform
+import ircfunctions
 # Use configparser to read the config file from the same directory as the script
 
 config = configparser.ConfigParser()
@@ -21,6 +19,8 @@ ext_server_hostname = config.get('server', 'hostname')
 ext_port = config.getint('server', 'port')
 ext_channel_autojoin_list = config.get('server', 'autojoin')
 
+# Ctcp variables.
+ctcp_version = config.get('ctcp', 'version')
 
 class FlyBot(pydle.Client):
     """main class for the bot"""
@@ -30,58 +30,31 @@ class FlyBot(pydle.Client):
     
     async def on_connect(self):
         await self.join(ext_channel_autojoin_list)
-
-    # Function to load all the files in the code/ directory that has a .py file ending
-    # and then load the code from the file into the bot. This allows for easy reloading
-    # of code without having to restart the bot. this uses importlib to import the code
-    # the path of the files ar code/ + filename.py
-
-
-    if __name__ == '__main__':
-        for p in Base.plugins:
-            inst = p()
-            inst.start()
+        print("Connected to: " + ext_server_hostname + " with hostname: " + src_host + " using nickname: " + src_nick)
+        print("Joined channels: " + ext_channel_autojoin_list)
+        print("Loaded " + str(len(ircfunctions.__dict__)) + " functions from ircfunctions.py")
     
-    # irc command to reload a particular module loaded from the code/ directory
-    # this uses importlib to reload the module. command looks like !reload <module>
+    # pydle settings to handle ctcp responses for version.
+    async def on_ctcp_version(self, by, target, contents):
+        await self.ctcp_reply(by, 'VERSION', ctcp_version)
 
-    @pydle.coroutine
-    def on_message(self, target, by, message):
-        if message.startswith("!reload"):
-            if by == "zphinx":
-                try:
-                    module = message.split(" ")[1]
-                    importlib.reload(importlib.import_module("code." + module))
-                    yield from self.message(target, "Reloaded " + module)
-                except Exception as e:
-                    yield from self.message(target, "Error reloading module: " + str(e))
-            else:
-                yield from self.message(target, "You are not authorized to use this command.")
-        elif message.startswith("!load"):
-            if by == "zphinx":
-                try:
-                    module = message.split(" ")[1]
-                    importlib.import_module("code." + module)
-                    yield from self.message(target, "Hotloaded " + module)
-                except Exception as e:
-                    yield from self.message(target, "Error hotloading module: " + str(e))
-            else:
-                    yield from self.message(target, "You are not authorized to use this command.")
-        elif message.startswith("!unload"):
-            if by == "zphinx":
-                try:
-                    module = message.split(" ")[1]
-                    del sys.modules["code." + module]
-                    yield from self.message(target, "Unloaded " + module)
-                except Exception as e:
-                    yield from self.message(target, "Error unloading module: " + str(e))
-            else:
-                yield from self.message(target, "You are not authorized to use this command.")
+    # now we handle on_channel_message events, with a whole lot of elifs.
+
+    async def on_channel_message(self, target, by, message):
+        if message.lower().startswith('!sv'):
+            await self.message(target, "I'm " + ctcp_version + " running on Python " + platform.python_version())
+        elif message.lower().startswith('!tr'):
+            fran = message.split(' ')[1]
+            till = message.split(' ')[2]
+            mening = message.partition(till)[2]
+            oversattning = ircfunctions.tr(fran, till, mening)
+            await self.message(target, "{}: {}".format(by, oversattning))
 
 
-    # pydle coroutine to hotload a .py file from the code/ directory by using importlib
-    # is triggered by the !hotload command. command looks like !hotload <module>
-
+    
+    # Function to handle ! commands on IRC from users, functions live in the ircfunctions.py file.
+    # This function is called from the pydle framework when a message is received.
+    # The message is parsed and if it starts with !, the command is executed.
 
 client = FlyBot(src_nick, fallback_nicknames=[], username=src_ident, realname=src_realname)
 client.run(ext_server_hostname, tls=False, tls_verify=False, source_address=(src_host, 0))
