@@ -49,6 +49,26 @@ class FlyBot(pydle.Client):
             mening = message.partition(till)[2]
             oversattning = ircfunctions.tr(fran, till, mening)
             await self.message(target, "{}: {}".format(by, oversattning))
+        elif message.lower().startswith('!lk'):
+            lk = ircfunctions.lk()
+            await self.message(target, "{}'s lyckokaka: {}".format(by, lk))
+        elif message.lower().startswith('!väder'):
+            arg = message.split(' ', 1)[1:]
+            arg2 = ' '.join(arg)
+            arg2 = arg2.capitalize()
+            vader = ircfunctions.vader(arg2)
+            await self.message(target, "{}: {}".format(by, vader))
+        elif message.lower().startswith('!tinyurl'):
+            arg = message.split(' ', 1)[1:]
+            arg = ' '.join(arg)
+            output = ircfunctions.tinyurl(arg)
+            await self.message(target, "{}'s förkortade länk: {}".format(by, output))
+        # every time the nick livet joins the channel #nightfly send to the channel "Welcome back livet!"
+        elif message.lower() == "!help":
+            await self.message(target, "Available commands: !sv, !tr, !lk, !väder, !tinyurl, !help")
+        elif message.lower().startswith('!'):
+            await self.message(target, "Unknown command, try !help")
+
 
 
     
