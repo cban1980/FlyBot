@@ -73,3 +73,7 @@ def syn(word: str):
         else:
             return "Kunde inte hitta några synonymer."
 
+def spot(arg):
+    html = requests.get('{}'.format(arg)).text
+    soup = bs(html, 'html5lib')
+    return soup.title.string

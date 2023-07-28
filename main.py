@@ -7,6 +7,7 @@ import configparser
 import os
 import platform
 import ircfunctions
+import re
 # Use configparser to read the config file from the same directory as the script
 
 config = configparser.ConfigParser()
@@ -68,9 +69,13 @@ class FlyBot(pydle.Client):
             arg = ' '.join(arg)
             output = ircfunctions.syn(arg)
             await self.message(target, "{}: {}".format(by, output))
-        # every time the nick livet joins the channel #nightfly send to the channel "Welcome back livet!"
         elif message.lower() == "!help":
-            await self.message(target, "Available commands: !sv, !tr, !lk, !väder, !tinyurl, !help")
+            await self.message(target, "Available commands: !sv, !tr, !lk, !väder, !tinyurl, !synonym and !help")
+        elif "open.spotify.com" in message.lower():
+            arg = re.search("(?P<url>https?://[^\s]+)", message).group("url")
+            music = ircfunctions.spot(arg)
+            music = music.replace('| Spotify', '')
+            await self.message(target, "{}'s Spotify länk -> {}".format(by, music))
         elif message.lower().startswith('!'):
             await self.message(target, "Unknown command, try !help")
 
