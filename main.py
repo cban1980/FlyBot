@@ -63,6 +63,11 @@ class FlyBot(pydle.Client):
             arg = ' '.join(arg)
             output = ircfunctions.tinyurl(arg)
             await self.message(target, "{}'s förkortade länk: {}".format(by, output))
+        elif message.lower().startswith('!synonym'):
+            arg = message.split(' ', 1)[1:]
+            arg = ' '.join(arg)
+            output = ircfunctions.syn(arg)
+            await self.message(target, "{}: {}".format(by, output))
         # every time the nick livet joins the channel #nightfly send to the channel "Welcome back livet!"
         elif message.lower() == "!help":
             await self.message(target, "Available commands: !sv, !tr, !lk, !väder, !tinyurl, !help")

@@ -11,10 +11,8 @@ import pyshorteners
 def cleanhtml(raw_html):
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', raw_html)
-    cleantext = cleantext.replace("&lt;", "<")
-    cleantext = cleantext.replace("&gt;", ">")
-    cleantext = cleantext.replace("&amp;", "&")
-    " ".join(map(str, cleantext))
+    cleantext = cleantext.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+    cleantext = cleantext.replace("\n", " ")
     return cleantext
 
 
@@ -60,3 +58,18 @@ def tinyurl(arg):
     type_tiny = pyshorteners.Shortener()
     short_url = type_tiny.tinyurl.short(long_url)
     return short_url
+
+
+def syn(word: str):
+    url = f"https://www.synonymer.se/sv-syn/{word}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.text
+        soup = bs(data, 'html5lib')
+        svar = soup.findAll("p", class_="synonymer-li-underline")
+        if len(svar) > 0:
+            svar = ", ".join([cleanhtml(str(s)) for s in svar])
+            return svar.strip("[]'")  # Remove square brackets and single quotes
+        else:
+            return "Kunde inte hitta några synonymer."
+
