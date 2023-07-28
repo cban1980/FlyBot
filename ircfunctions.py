@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup as bs
 import requests
 import re 
 import pyshorteners
+import openai
+import os
 
 def cleanhtml(raw_html):
     cleanr = re.compile('<.*?>')
@@ -77,3 +79,25 @@ def spot(arg):
     html = requests.get('{}'.format(arg)).text
     soup = bs(html, 'html5lib')
     return soup.title.string
+
+
+def chatgpt(input_text):
+    # Set up OpenAI API credentials
+    openai.api_key = os.environ["OPENAI_API_KEY"]  # Replace with your actual API key
+    system_message = "Du är en svensk IRC chatbot som sitter i kanalen #nightfly och svarar på frågor från användare."
+    prompt_with_system_message = f"{system_message}\n{input_text}"
+    # Calculate the maximum number of tokens based on the maximum message length
+    max_tokens = 64  # Assuming an average word length of 5 characters
+
+    # Send input text to OpenAI GPT-3 API
+    response = openai.Completion.create(
+        engine="text-curie-001",  # Replace with the appropriate engine, e.g., "text-davinci-002"
+        prompt=prompt_with_system_message,
+        max_tokens=100,  # Adjust the length of the response as needed
+    )
+
+    # Extract the response text from the API response
+    response_text = response.choices[0].text.strip()
+
+    # Return response as an IRC message
+    return f"{response_text}"
