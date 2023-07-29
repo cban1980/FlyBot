@@ -99,22 +99,7 @@ def chatgpt(input_text):
 
     # Extract the response text from the API response
     response_text = response.choices[0].text.strip()
-
-    # Check if response text is empty
     if not response_text:
-        # Retry API call with more context
-        prompt_with_system_message = f"{system_message}\n{input_text}\n\nKan du ge mig mer information om din fråga?"
-        response = openai.Completion.create(
-            engine="text-davinci-002",  # Use the text-davinci-002 engine
-            prompt=prompt_with_system_message,
-            max_tokens=100,  # Adjust the length of the response as needed
-            temperature=0.5,  # Adjust the temperature parameter to control the creativity of the response
-        )
-        response_text = response.choices[0].text.strip()
-
-        # Check if response text is still empty
-        if not response_text:
-            return None
-
-    # Return response as an IRC message
-    return response_text
+        return "Jag förstår inte vad du menar."
+    else:
+        return response_text
