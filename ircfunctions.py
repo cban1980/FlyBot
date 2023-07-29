@@ -84,20 +84,37 @@ def spot(arg):
 def chatgpt(input_text):
     # Set up OpenAI API credentials
     openai.api_key = os.environ["OPENAI_API_KEY"]  # Replace with your actual API key
-    system_message = "Du är en svensk IRC chatbot som sitter i kanalen #nightfly och svarar på frågor från användare."
-    prompt_with_system_message = f"{system_message}\n{input_text}"
-    # Calculate the maximum number of tokens based on the maximum message length
-    max_tokens = 64  # Assuming an average word length of 5 characters
+
+    # Construct prompt with system message and input text in Swedish
+    system_message = "Du är en svensk IRC chatbot som sitter i kanalen #nightfly och svarar på frågor från användare. Du svarar på alla sorters frågor, inte bara IRC relaterade frågor. Ditt botnamn är Byis"
+    prompt_with_system_message = f"{system_message}\n{input_text}\n\nHej, hur mår du idag?"
 
     # Send input text to OpenAI GPT-3 API
     response = openai.Completion.create(
-        engine="text-curie-001",  # Replace with the appropriate engine, e.g., "text-davinci-002"
+        engine="text-davinci-002",  # Use the text-davinci-002 engine
         prompt=prompt_with_system_message,
         max_tokens=100,  # Adjust the length of the response as needed
+        temperature=0.5,  # Adjust the temperature parameter to control the creativity of the response
     )
 
     # Extract the response text from the API response
     response_text = response.choices[0].text.strip()
 
+    # Check if response text is empty
+    if not response_text:
+        # Retry API call with more context
+        prompt_with_system_message = f"{system_message}\n{input_text}\n\nKan du ge mig mer information om din fråga?"
+        response = openai.Completion.create(
+            engine="text-davinci-002",  # Use the text-davinci-002 engine
+            prompt=prompt_with_system_message,
+            max_tokens=100,  # Adjust the length of the response as needed
+            temperature=0.5,  # Adjust the temperature parameter to control the creativity of the response
+        )
+        response_text = response.choices[0].text.strip()
+
+        # Check if response text is still empty
+        if not response_text:
+            return None
+
     # Return response as an IRC message
-    return f"{response_text}"
+    return response_text

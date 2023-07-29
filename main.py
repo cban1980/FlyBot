@@ -76,7 +76,7 @@ class FlyBot(pydle.Client):
             music = ircfunctions.spot(arg)
             music = music.replace('| Spotify', '')
             await self.message(target, "{}'s Spotify länk -> {}".format(by, music))
-        elif message.lower().startswith('!chatgpt'):
+        elif message.lower().startswith('byis:'):
             arg = message.split(' ', 1)[1:]
             response = ircfunctions.chatgpt(arg)
             await self.message(target, "{}: {}".format(by, response))
