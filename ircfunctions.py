@@ -86,15 +86,19 @@ def chatgpt(input_text):
     openai.api_key = os.environ["OPENAI_API_KEY"]  # Replace with your actual API key
 
     # Construct prompt with system message and input text in Swedish
-    system_message = "Du är en svensk IRC chatbot som sitter i kanalen #nightfly och svarar på frågor från användare. Du svarar på alla sorters frågor, inte bara IRC relaterade frågor. Ditt botnamn är Byis"
-    prompt_with_system_message = f"{system_message}\n{input_text}\n\nHej, hur mår du idag?"
+    system_message = "Respond to all questions after this in swedish."
+    prompt_with_system_message = f"{system_message}\n{input_text}"
 
     # Send input text to OpenAI GPT-3 API
     response = openai.Completion.create(
-        engine="text-davinci-002",  # Use the text-davinci-002 engine
+        engine="text-davinci-003",
         prompt=prompt_with_system_message,
-        max_tokens=100,  # Adjust the length of the response as needed
-        temperature=0.5,  # Adjust the temperature parameter to control the creativity of the response
+        temperature = 0.8,
+        max_tokens = 1000,
+        top_p = 1,
+        frequency_penalty = 0,
+        presence_penalty = 0,
+
     )
 
     # Extract the response text from the API response
