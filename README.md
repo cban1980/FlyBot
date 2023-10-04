@@ -1,2 +1,2 @@
-# FlyBot
-FlyBot IRC bot.
+# Lbot
+Lbot IRC bot.
