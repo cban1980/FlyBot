@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# IRC Bot for #nightfly on DALnet, based on the pydle framework for Python 3.7 and above.
+# IRC Bot for #Linux.se on IRCnet, based on the pydle framework for Python 3.7 and above.
 
 import pydle
 import configparser
@@ -23,7 +23,7 @@ ext_channel_autojoin_list = config.get('server', 'autojoin')
 # Ctcp variables.
 ctcp_version = config.get('ctcp', 'version')
 
-class FlyBot(pydle.Client):
+class Lbot(pydle.Client):
     """main class for the bot"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,7 +76,7 @@ class FlyBot(pydle.Client):
             music = ircfunctions.spot(arg)
             music = music.replace('| Spotify', '')
             await self.message(target, "{}'s Spotify länk -> {}".format(by, music))
-        elif message.lower().startswith('byis:'):
+        elif message.lower().startswith('snuskpelle:'):
             arg = message.split(' ', 1)[1:]
             response = ircfunctions.chatgpt(arg)
             await self.message(target, "{}: {}".format(by, response))
@@ -90,6 +90,6 @@ class FlyBot(pydle.Client):
     # This function is called from the pydle framework when a message is received.
     # The message is parsed and if it starts with !, the command is executed.
 
-client = FlyBot(src_nick, fallback_nicknames=[], username=src_ident, realname=src_realname)
+client = Lbot(src_nick, fallback_nicknames=[], username=src_ident, realname=src_realname)
 client.run(ext_server_hostname, tls=False, tls_verify=False, source_address=(src_host, 0))
 client.handle_forever(family=pydle.IPv6)
