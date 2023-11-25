@@ -106,7 +106,4 @@ def chatgpt(input_text):
 
     # Extract the response text from the API response
     response_text = response.choices[0].text.strip()
-    if not response_text:
-        return "Jag förstår inte vad du menar."
-    else:
         return response_text
