@@ -23,6 +23,7 @@ def tr(fran, till, mening):
     translator = Translator()
     translation = translator.translate(mening, src=fran, dest=till)
     return translation.text
+
 def lk():
     "En lyckokaka."
     html = requests.get('http://www.fortunecookiemessage.com/').text
@@ -32,6 +33,7 @@ def lk():
     translator = Translator()
     translation = translator.translate(svar, src="en", dest="sv")
     return translation.text.strip("[]")
+
 def vader(city: str):
     # Fetch weather data from OpenWeatherMap
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city},se&units=metric&lang=sv&appid=71ca5f7c7040a2573a610541a5ea76af"
@@ -54,6 +56,7 @@ def vader(city: str):
         tomorrow_weather = data_forecast["list"][0]["weather"][0]["description"]
 
         return (f"Nuvarande väder i {city}: Temperatur: {temperature} grader Celsius, Lufttryck: {pressure} hPa, Luftfuktighet: {humidity}%, Vindhastighet: {wind_speed} m/s, Vindriktning: {wind_direction} grader, Molnighet: {clouds}%, Väderbeskrivning: {weather}. Imorgon: {tomorrow_weather}")
+
 def tinyurl(arg):
     arg = str(arg)
     long_url = arg
@@ -86,7 +89,7 @@ def chatgpt(input_text):
     openai.api_key = os.environ["OPENAI_API_KEY"]  # Replace with your actual API key
 
     # Construct prompt with system message and input text in Swedish
-    system_message = "Respond to all questions after this in swedish."
+    system_message = "Respond to everything after this in the language it was posed, without just echoing back the input."
     prompt_with_system_message = f"{system_message}\n{input_text}"
 
     # Send input text to OpenAI GPT-3 API
