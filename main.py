@@ -81,13 +81,6 @@ class Lbot(pydle.Client):
             response = ircfunctions.chatgpt(arg)
             await self.message(target, "{}: {}".format(by, response))
 
-
-
-    
-    # Function to handle ! commands on IRC from users, functions live in the ircfunctions.py file.
-    # This function is called from the pydle framework when a message is received.
-    # The message is parsed and if it starts with !, the command is executed.
-
 client = Lbot(src_nick, fallback_nicknames=[], username=src_ident, realname=src_realname)
 client.run(ext_server_hostname, tls=False, tls_verify=False, source_address=(src_host, 0))
 client.handle_forever(family=pydle.IPv6)
