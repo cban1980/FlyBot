@@ -80,8 +80,6 @@ class Lbot(pydle.Client):
             arg = message.split(' ', 1)[1:]
             response = ircfunctions.chatgpt(arg)
             await self.message(target, "{}: {}".format(by, response))
-        elif message.lower().startswith('!'):
-            await self.message(target, "Unknown command, try !help")
 
 
 
